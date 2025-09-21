@@ -50,14 +50,18 @@ void ControlsScreen::build() {
 	interactables["p1"] = std::make_unique<Interactable>(text);
 
 	auto bounds = text->getGlobalBounds();
-	text = new lif::ShadedText(font, " / ", sf::Vector2f(bounds.left + bounds.width, ipady));
-	text->setCharacterSize(fontSize);
-	nonInteractables.emplace_back(text);
+	for (int i = 2; i <= lif::MAX_PLAYERS; ++i) {
+		text = new lif::ShadedText(font, " / ", sf::Vector2f(bounds.left + bounds.width, ipady));
+		text->setCharacterSize(fontSize);
+		nonInteractables.emplace_back(text);
 
-	bounds = text->getGlobalBounds();
-	text = new lif::ShadedText(font, "P2", sf::Vector2f(bounds.left + bounds.width, ipady));
-	text->setCharacterSize(fontSize);
-	interactables["p2"] = std::make_unique<Interactable>(text);
+		bounds = text->getGlobalBounds();
+		text = new lif::ShadedText(
+			font, "P" + std::to_string(i), sf::Vector2f(bounds.left + bounds.width, ipady));
+		text->setCharacterSize(fontSize);
+		interactables["p" + std::to_string(i)] = std::make_unique<Interactable>(text);
+		bounds = text->getGlobalBounds();
+	}
 
 	float y = bounds.top + 3 * bounds.height,
 	      x = 180;
@@ -150,8 +154,9 @@ void ControlsScreen::build() {
 }
 
 void ControlsScreen::_setupCallbacks() {
-	callbacks["p1"] = [this] () { return _selectPlayer(1); };
-	callbacks["p2"] = [this] () { return _selectPlayer(2); };
+	for (int i = 1; i <= lif::MAX_PLAYERS; ++i) {
+		callbacks["p" + std::to_string(i)] = [this, i] () { return _selectPlayer(i); };
+	}
 	callbacks["joystick_toggle"] = [this] () { return _toggleJoystick(); };
 	callbacks["change_up"] = [this] () { return _changeControl("change_up"); };
 	callbacks["change_down"] = [this] () { return _changeControl("change_down"); };
@@ -162,9 +167,13 @@ void ControlsScreen::_setupCallbacks() {
 
 void ControlsScreen::_setupTransitions() {
 	using D = lif::Direction;
-	transitions.add("p1", std::make_pair(D::RIGHT, "p2"));
-	transitions.add("p1", std::make_pair(D::DOWN, "change_up"));
-	transitions.add("p2", std::make_pair(D::DOWN, "change_up"));
+	for (int i = 1; i < lif::MAX_PLAYERS; ++i) {
+		transitions.add("p" + std::to_string(i),
+						std::make_pair(D::RIGHT, "p" + std::to_string(i + 1)));
+	}
+	for (int i = 1; i <= lif::MAX_PLAYERS; ++i) {
+		transitions.add("p" + std::to_string(i), std::make_pair(D::DOWN, "change_up"));
+	}
 	transitions.add("change_up", std::make_pair(D::DOWN, "change_down"));
 	transitions.add("change_down", std::make_pair(D::DOWN, "change_left"));
 	transitions.add("change_left", std::make_pair(D::DOWN, "change_right"));

@@ -75,7 +75,17 @@ file(GLOB LIFISH_SRC ${MAIN_FILE}
 	src/lifish/entities/*cpp
 	src/lifish/level/*cpp
 	src/third_party/*cpp
-	src/ui/*cpp
+	src/ui/ControlsScreen.cpp
+	src/ui/HighScoreScreen.cpp
+	src/ui/LoadScreen.cpp
+	src/ui/PreferencesScreen.cpp
+	src/ui/SaveDataBrowser.cpp
+	src/ui/SaveScreen.cpp
+	src/ui/Screen.cpp
+	src/ui/ScreenBuilder.cpp
+	src/ui/SidePanel.cpp
+	src/ui/UI.cpp
+	src/ui/screen_callbacks.cpp
 )
 
 if(NOT RELEASE)

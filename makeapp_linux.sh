@@ -17,13 +17,13 @@ runtime_baseurl="https://github.com/AppImage/type2-runtime/releases/download/$ru
 
 # Shared libraries as of Ubuntu 22.04
 required_libs=(
-	libsfml-audio.so.2.5
-	libsfml-graphics.so.2.5
-	libsfml-system.so.2.5
-	libsfml-window.so.2.5
+	libsfml-audio.so.2.6
+	libsfml-graphics.so.2.6
+	libsfml-system.so.2.6
+	libsfml-window.so.2.6
 
 	libbsd.so.0
-	libFLAC.so.8
+	libFLAC.so.12
 	libfreetype.so.6
 	libmd.so.0
 	libogg.so.0
@@ -58,6 +58,6 @@ if [ ! -f "$runtime_filename" ]; then
 	chmod +x "$runtime_filename"
 fi
 
-./"$appimagetool_filename" --no-appstream --runtime-file "runtime-$system_arch" lifish.AppDir "BOOM-Remake-$sw_version-linux-$system_arch.AppImage"
+./"$appimagetool_filename" --no-appstream --runtime-file "runtime-$system_arch" lifish.AppDir "lifish.AppImage"
 
-rm -r lifish.AppDir
+#rm -r lifish.AppDir

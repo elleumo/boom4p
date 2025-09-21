@@ -20,8 +20,8 @@ std::array<unsigned, lif::MAX_PLAYERS> lif::controls::joystickBombKey = {{ 0, 0,
 
 // Quale joystick usa ciascun player: -1 = tastiera, 0 = joystick #0, 1 = joystick #1, ecc.
 std::array<short, lif::MAX_PLAYERS> lif::controls::useJoystick = {{
-    -1,  // P1 su tastiera
-    -1,  // P2 su tastiera
-     0,  // P3 su joystick #0
-     1   // P4 su joystick #1
+    0,  // P1 su tastiera
+    1,  // P2 su tastiera
+    2,  // P3 su joystick #0
+    3   // P4 su joystick #1
 }};

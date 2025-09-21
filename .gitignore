@@ -46,3 +46,8 @@ lvtest.json
 .gdb_history
 .vscode
 .lif_prefs.json
+build/
+*.AppImage
+lifish.AppDir/
+appimagetool-*.AppImage
+runtime-*
