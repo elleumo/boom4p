@@ -1,6 +1,7 @@
 #pragma once
 
 /** General-purpose game setup */
+#include "path_utils.hpp"
 #include <SFML/System.hpp>
 #include <chrono>
 #include <random>
@@ -94,7 +95,7 @@ extern int exitCode;
 /*                         GLOBAL FUNCTIONS                                 */
 /****************************************************************************/
 
-constexpr const std::string& getAssetDir() {
+inline const std::string& getAssetDir() {
 	return assetDir;
 }
 
@@ -102,23 +103,13 @@ constexpr const std::string& getSaveDir() {
 	return saveDir;
 }
 
-inline void _getAssetInternal(std::stringstream&) {}
-
-template<typename... Args>
-inline void _getAssetInternal(std::stringstream& ss, const std::string& first, Args&&... rest) {
-	ss << first << DIRSEP;
-	_getAssetInternal(ss, rest...);
-}
-
 /** Returns the asset found under assetDir/{path args joined by DIRSEP} */
 template<typename ...Args>
-inline std::string getAsset(Args&&... path) {
-	std::stringstream ss;
-	ss << getAssetDir();
-	_getAssetInternal(ss, path...);
-	auto s = ss.str();
-	s.resize(s.length() - 1);
-	return s;
+inline std::string getAsset(const std::string& first, Args&&... path) {
+    std::stringstream ss;
+    ss << first;
+    ((ss << '/' << path), ...);
+    return getAssetPath(first, ss.str().substr(first.length() + 1));
 }
 
 /** Initializes runtime variables */

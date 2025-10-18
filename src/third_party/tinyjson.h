@@ -42,33 +42,71 @@ inline std::string trim(const std::string&& str,
     return str.substr(strBegin, strRange);
 }
 
-inline std::string U32ToU8(std::u32string u32)
+inline std::u32string U8ToU32(const std::string& u8)
 {
-    try
+    std::u32string u32;
+    for (size_t i = 0; i < u8.length(); )
     {
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utf32conv;
-        return utf32conv.to_bytes(u32);
+        char32_t c;
+        unsigned char c0 = u8[i++];
+        if (c0 < 0x80)
+        {
+            c = c0;
+        }
+        else if (c0 < 0xE0)
+        {
+            unsigned char c1 = u8[i++];
+            c = ((c0 & 0x1F) << 6) | (c1 & 0x3F);
+        }
+        else if (c0 < 0xF0)
+        {
+            unsigned char c1 = u8[i++];
+            unsigned char c2 = u8[i++];
+            c = ((c0 & 0x0F) << 12) | ((c1 & 0x3F) << 6) | (c2 & 0x3F);
+        }
+        else
+        {
+            unsigned char c1 = u8[i++];
+            unsigned char c2 = u8[i++];
+            unsigned char c3 = u8[i++];
+            c = ((c0 & 0x07) << 18) | ((c1 & 0x3F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F);
+        }
+        u32 += c;
     }
-    catch(std::range_error& ex)
-    {
-        // rethrow
-        throw std::runtime_error("invalid utf32 string: " + std::string(ex.what()));
-    }
+    return u32;
 }
 
-inline std::u32string U8ToU32(std::string u8)
+inline std::string U32ToU8(const std::u32string& u32)
 {
-    try
+    std::string u8;
+    for (char32_t c : u32)
     {
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> utf32conv;
-        return utf32conv.from_bytes(u8);
+        if (c < 0x80)
+        {
+            u8 += c;
+        }
+        else if (c < 0x800)
+        {
+            u8 += (0xC0 | (c >> 6));
+            u8 += (0x80 | (c & 0x3F));
+        }
+        else if (c < 0x10000)
+        {
+            u8 += (0xE0 | (c >> 12));
+            u8 += (0x80 | ((c >> 6) & 0x3F));
+            u8 += (0x80 | (c & 0x3F));
+        }
+        else
+        {
+            u8 += (0xF0 | (c >> 18));
+            u8 += (0x80 | ((c >> 12) & 0x3F));
+            u8 += (0x80 | ((c >> 6) & 0x3F));
+            u8 += (0x80 | (c & 0x3F));
+        }
     }
-    catch(const std::exception& ex)
-    {
-         // rethrow
-        throw std::runtime_error("invalid utf32 string: " + std::string(ex.what()));
-    }
+    return u8;
 }
+
 
 enum json_t
 {
@@ -599,10 +637,7 @@ static json parse(const char* s)
 {
     // take UTF8 input and convert to UTF32
     // so we can read char by char for parsing
-    std::stringstream sstrm(s);
-
-    std::wbuffer_convert<std::codecvt_utf8<char32_t>, char32_t> conv(sstrm.rdbuf());
-    u32_istream u32strm(&conv);
+    u32_sstream u32strm(U8ToU32(s));
 
     json ret_val;
     char32_t first_char = peek_next_non_space(u32strm);

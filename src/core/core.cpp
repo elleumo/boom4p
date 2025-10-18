@@ -3,6 +3,7 @@
 #include "Options.hpp"
 #include "preferences_persistence.hpp"
 #include "Time.hpp"
+#include "path_utils.hpp"
 #include <chrono>
 #include <cstring>
 #ifndef RELEASE
@@ -107,9 +108,13 @@ bool lif::initCore() {
 		return false;
 
 	// Fill the assetDir and saveDir variables once and for all
+    assetDir = getAssetPath("", "");
+    if (assetDir.length() > 0) {
+        assetDir.pop_back();
+    }
+
 #if defined(SFML_SYSTEM_MACOS)
 	// In addition to saved games, saveDir is also used to save preferences
-	assetDir = bundleResourcesPath() + DIRSEP;
 	saveDir = applicationSupportPath() + DIRSEP + "BOOM Remake" + DIRSEP;
 	preferencesPath = saveDir + std::string(PREFERENCES_SAVE_FILE_NAME);
 
@@ -117,19 +122,6 @@ bool lif::initCore() {
 	const char * xdg_data_home = std::getenv("XDG_DATA_HOME");
 	const char * xdg_config_home = std::getenv("XDG_CONFIG_HOME");
 	const char * home = std::getenv("HOME");
-
-	std::stringstream ss;
-	// Used for the AppImage distribution
-	ss << pwd << "/../../assets/";
-
-	struct stat result;
-	int err = stat(ss.str().c_str(), &result);
-	if (err != 0 || !S_ISDIR(result.st_mode)) {
-		ss.str("");
-		ss << pwd << "/assets/";
-	}
-
-	assetDir = ss.str();
 
 	if (xdg_data_home) {
 		saveDir = std::string(xdg_data_home) + "/lifish/";
@@ -147,10 +139,6 @@ bool lif::initCore() {
 
 #else
 	std::stringstream ss;
-	ss << pwd << DIRSEP << "assets" << DIRSEP;
-	assetDir = ss.str();
-
-	ss.str("");
 	ss << pwd << DIRSEP << "saves" << DIRSEP;
 	saveDir = ss.str();
 

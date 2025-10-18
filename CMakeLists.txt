@@ -64,6 +64,7 @@ include_directories(src/third_party)
 include_directories(src/ui)
 file(GLOB LIFISH_SRC ${MAIN_FILE}
 	src/core/*cpp
+	src/core/path_utils.cpp
 	src/core/collisions/*cpp
 	src/core/components/*cpp
 	src/core/cutscenes/*cpp
