@@ -180,6 +180,8 @@ void InterlevelContext::_preparePromptHighScore(unsigned short idx) {
 	bounds = subtitleText.getGlobalBounds();
 	subtitleText.setPosition(lif::center(bounds, WIN_BOUNDS) + sf::Vector2f(-100.0, 2 * bounds.height));
 	subtitleText.setString("_");
+	buffer.fill('\0');
+	bufIdx = 0;
 }
 
 void InterlevelContext::update() {
