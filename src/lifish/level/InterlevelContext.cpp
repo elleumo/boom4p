@@ -185,6 +185,11 @@ void InterlevelContext::_preparePromptHighScore(unsigned short idx) {
 }
 
 void InterlevelContext::update() {
+	if (curPromptedPlayer >= lif::MAX_PLAYERS) {
+		_setGettingReady();
+		return;
+	}
+
 	time += lif::time.getDelta();
 	switch (state) {
 	case State::DISTRIBUTING_POINTS:
@@ -283,7 +288,7 @@ void InterlevelContext::_ackPromptResponse() {
 		lm.setPlayerContinues(curPromptedPlayer + 1, 0);
 	do {
 		++curPromptedPlayer;
-	} while (!mustPromptPlayer[curPromptedPlayer] && curPromptedPlayer < mustPromptPlayer.size());
+	} while (curPromptedPlayer < mustPromptPlayer.size() && !mustPromptPlayer[curPromptedPlayer]);
 
 	yesText.setFillColor(sf::Color(0, 0, 0, 0));
 	noText.setFillColor(sf::Color(0, 0, 0, 0));
@@ -341,7 +346,7 @@ bool InterlevelContext::_handleEventPromptHighscore(sf::Event event) {
 	if (ch == (char)-1)
 		return false;
 
-	if (bufIdx < buffer.size()) {
+	if (bufIdx < buffer.size() - 1) {
 		buffer[bufIdx++] = ch;
 		bufferText->setString(std::string(buffer.data(), bufIdx));
 		_updateCursorPosition();

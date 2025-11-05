@@ -16,7 +16,7 @@ class SidePanel;
  */
 class InterlevelContext : public lif::WindowContext {
 
-	constexpr static unsigned MAX_HIGH_SCORE_NAME_LEN = 16;
+	constexpr static unsigned MAX_HIGH_SCORE_NAME_LEN = 32;
 
 	enum class State {
 		DISTRIBUTING_POINTS,

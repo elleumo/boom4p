@@ -1,13 +1,15 @@
 #pragma once
 
 namespace lif {
-namespace debug {
+    class GameContext;
+}
 
-class GameContext;
+namespace lif {
+namespace debug {
 
 class DebugEventHandler {
 public:
-	DebugEventHandler(GameContext&) {}
+	DebugEventHandler(lif::GameContext&) {}
 };
 
 }
