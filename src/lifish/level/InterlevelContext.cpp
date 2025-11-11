@@ -185,11 +185,6 @@ void InterlevelContext::_preparePromptHighScore(unsigned short idx) {
 }
 
 void InterlevelContext::update() {
-	if (curPromptedPlayer >= lif::MAX_PLAYERS) {
-		_setGettingReady();
-		return;
-	}
-
 	time += lif::time.getDelta();
 	switch (state) {
 	case State::DISTRIBUTING_POINTS:
